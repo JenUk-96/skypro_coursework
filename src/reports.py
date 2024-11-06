@@ -12,11 +12,10 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-
 def spending_by_category(
         transactions: pd.DataFrame, category: str, date: [str] = None
 ) -> pd.DataFrame:
-    logger.info(f'Начало работы функции-отчета по тразакциям')
+    logger.info('Начало работы функции-отчета по тразакциям')
     """Функция-отчет по транзакциям в указанной категории"""
     df = transactions
     date = pd.to_datetime("31.07.2021", format="%d.%m.%Y")  # '2021-07-31'

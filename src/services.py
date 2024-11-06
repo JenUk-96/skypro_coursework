@@ -55,7 +55,7 @@ def creat_dict(path_to_file: str) -> list:
 def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int):
     """Функция, возвращающая сумму, которую можно было бы отложить в Инвесткопилку
     в заданном месяце года при заданном округлении"""
-    logger.info(f'Запуск работы функции расчета выгоды инвесткопилки')
+    logger.info('Запуск работы функции расчета выгоды инвесткопилки')
     # month_choice = month(0)
 
     operations = []
@@ -77,7 +77,7 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int):
         # суммируем кэшбэк за указанный месяц
         total_investment += investment
         total_investment = round(total_investment, 2)
-    logger.info(f'Выводим сообщение о накопленных средствах')
+    logger.info('Выводим сообщение о накопленных средствах')
     print(
         f"Итого за {month} в инвесткопилку была бы отложена сумма {total_investment} руб."
     )

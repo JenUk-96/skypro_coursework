@@ -11,14 +11,15 @@ hour = current_date.hour
 
 logger = logging.getLogger('views')
 logger.setLevel(logging.INFO)
-file_handler = logging.fileHandler('logs/views.log')
+file_handler = logging.FileHandler('logs/views.log')
 file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
+
 def greet_user(hour):
     """Приветствуем пользователя в зависимости от времени суток"""
-    logger.info(f'Запуск приветственного сообщения')
+    logger.info('Запуск приветственного сообщения')
     if 4 <= hour <= 12:
         return "Доброе утро!"
     elif 12 <= hour <= 18:
@@ -31,13 +32,13 @@ def greet_user(hour):
 
 def filter_operations():
     """Функция страницы главная: Выводит номера карт, ТОП - 5 трат и КэшБэк"""
-    logger.info(f'Запуск программы фильтрации')
+    logger.info('Запуск программы фильтрации')
     transactions = read_xlsx_file(path_to_file)
     operations = []
     card_numbers = []
     counter_amount = 0
     """Сортировка транзакций за месяц"""
-    logger.info(f'Сортировка тразакций за месяц')
+    logger.info('Сортировка тразакций за месяц')
     for transaction in transactions:
         if "07.2021" in str(transaction["Дата платежа"]):
             operations.append(transaction)
@@ -65,7 +66,7 @@ def filter_operations():
     """Сортировка словаря по величине суммы транзакций в порядке убывания"""
     sorted_operations = sorted(operations, key=lambda x: abs(x["Сумма операции"]), reverse=True)
     """Вывод ТОП-5 транзакций"""
-    logger.info(f'Вывод ТОП-5 тразакций')
+    logger.info('Вывод ТОП-5 тразакций')
     top_5_transactions = sorted_operations[:5]
     result = []
     count = 0
@@ -107,13 +108,3 @@ def get_price_stock(symbol: list) -> list:
     result = f"Дата: {date}, стоимость акции {symbol} составляет {price}"
     print(result)
     return price
-
-
-if __name__ == "__main__":
-    #get_price_stock("EUR")
-    print(get_price_stock("GOOGL"))
-    print(get_price_stock("TSLA"))
-    # get_price_stock("AMZN")
-    # get_price_stock("AAPL")
-    # get_price_stock("MSFT")
-    print(filter_operations())
