@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger('utils')
 logger.setLevel(logging.INFO)
-file_handler = logging.FileHandler('logs/utils.log')
+log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs") # поднимаемся на один уровень вверх
+os.makedirs(log_dir, exist_ok=True)
+file_handler = logging.FileHandler(os.path.join(log_dir, 'utils.log'))
 file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
