@@ -1,15 +1,20 @@
+# from src.date import month
+import logging
 from datetime import datetime
-import json
 from typing import Any, Dict, List
 
 import openpyxl
 
-# from src.date import month
-from src.utils import read_xlsx_file, path_to_file
-
+logger = logging.getLogger('services')
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler('logs/services.log')
+file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 date_obj = datetime(2021, 5, 31)
 str_date_service = datetime.strftime(date_obj, "%Y-%m")
+
 
 def creat_dict(path_to_file: str) -> list:
     workbook = openpyxl.load_workbook(path_to_file)
@@ -17,7 +22,7 @@ def creat_dict(path_to_file: str) -> list:
     headers = [cell.value for cell in sheet[1]]
     transactions = []
     try:
-        #logger.info("Создали список словарей")
+        logger.info("Создали список словарей")
         for row in sheet.iter_rows(min_row=2, values_only=True):
             row_data = dict(zip(headers, row))
             transactions.append(
@@ -43,12 +48,14 @@ def creat_dict(path_to_file: str) -> list:
                 return transactions
                 break
     except Exception as e:
-        #logger.error(f"Ошибка с созданием списка словарей: {e}.")
+        logger.error(f"Ошибка с созданием списка словарей: {e}.")
         print(f"Ошибка с созданием списка словарей: {e}.")
+
 
 def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int):
     """Функция, возвращающая сумму, которую можно было бы отложить в Инвесткопилку
     в заданном месяце года при заданном округлении"""
+    logger.info(f'Запуск работы функции расчета выгоды инвесткопилки')
     # month_choice = month(0)
 
     operations = []
@@ -70,13 +77,11 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int):
         # суммируем кэшбэк за указанный месяц
         total_investment += investment
         total_investment = round(total_investment, 2)
-
+    logger.info(f'Выводим сообщение о накопленных средствах')
     print(
         f"Итого за {month} в инвесткопилку была бы отложена сумма {total_investment} руб."
     )
     return total_investment
 
-
-
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    print(investment_bank(str_date_service, creat_dict(path_to_file), 100))

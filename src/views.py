@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 import requests
@@ -8,9 +9,16 @@ from src.utils import read_xlsx_file, path_to_file
 current_date = datetime.datetime.now()
 hour = current_date.hour
 
+logger = logging.getLogger('views')
+logger.setLevel(logging.INFO)
+file_handler = logging.fileHandler('logs/views.log')
+file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 def greet_user(hour):
     """Приветствуем пользователя в зависимости от времени суток"""
+    logger.info(f'Запуск приветственного сообщения')
     if 4 <= hour <= 12:
         return "Доброе утро!"
     elif 12 <= hour <= 18:
@@ -23,21 +31,23 @@ def greet_user(hour):
 
 def filter_operations():
     """Функция страницы главная: Выводит номера карт, ТОП - 5 трат и КэшБэк"""
+    logger.info(f'Запуск программы фильтрации')
     transactions = read_xlsx_file(path_to_file)
     operations = []
     card_numbers = []
     counter_amount = 0
     """Сортировка транзакций за месяц"""
+    logger.info(f'Сортировка тразакций за месяц')
     for transaction in transactions:
         if "07.2021" in str(transaction["Дата платежа"]):
             operations.append(transaction)
             counter_amount += abs(transaction["Сумма платежа"])
 
             """Записываем номера карт"""
-            # logger.info("Начало работы функции ()")
+            logger.info("Запись номеров карт")
             cards = {}
             result = []
-            # logger.info("Перебор транзакций")
+            logger.info("Перебор транзакций")
             for i in transactions:
                 if i["Номер карты"] == "nan" or type(i["Номер карты"]) is float:
                     continue
@@ -50,18 +60,19 @@ def filter_operations():
                         cards[i["Номер карты"][1:]] = float(str(i["Сумма платежа"])[1:])
             for k, v in cards.items():
                 result.append({"last_digits": k, "total_spent": round(v, 2), "cashback": round(v / 100, 2)})
-            # logger.info("Завершение работы функции (for_each_card)")
+            logger.info("Завершение работы функции (filter_operations)")
             return result
     """Сортировка словаря по величине суммы транзакций в порядке убывания"""
     sorted_operations = sorted(operations, key=lambda x: abs(x["Сумма операции"]), reverse=True)
     """Вывод ТОП-5 транзакций"""
+    logger.info(f'Вывод ТОП-5 тразакций')
     top_5_transactions = sorted_operations[:5]
     result = []
     count = 0
     for top in top_5_transactions:
         count += 1
         result.append(f"{count}. {top["Категория"]} : {top["Сумма операции"]}")
-        # logger.info("Производится расчет топ - 5 транзакций по сумме операций")
+        logger.info("Производится расчет топ - 5 транзакций по сумме операций")
         print("Топ - 5 транзакций:")
         for transaction in result:
             print(transaction)
@@ -69,7 +80,7 @@ def filter_operations():
         for number in card_numbers:
             print(number)
         """Расчет кэшбэка"""
-        # logger.info("Рассчитываем кэшбэк")
+        logger.info("Рассчитываем кэшбэк")
         cashback = round(counter_amount / 100, 2)
         print(f"Сумма расходов за июль 2021 составляет: {round(counter_amount, 2)} руб.")
         print(f"Сумма кэшбэка за июль 2021 составляет: {cashback}")
@@ -78,7 +89,7 @@ def filter_operations():
 
 def get_price_stock(symbol: list) -> list:
     """Функция получения данных об акциях из списка S&P500"""
-    # logger.info("Начало работы функции (get_price_stock)")"""Функция, принимающая код акции и возвращающая ее стоимость на дату 01.07.2024"""
+    logger.info("Начало работы функции (get_price_stock)")
     apikey = os.getenv("APIKEY")
     date = "2024-11-01"
     url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={apikey}"
@@ -92,7 +103,7 @@ def get_price_stock(symbol: list) -> list:
             break
     else:
         print(f"Не удалось найти данные для акции на {date}")
-    # logger.info("Передаю данные о стоимости акций")
+    logger.info("Передаю данные о стоимости акций")
     result = f"Дата: {date}, стоимость акции {symbol} составляет {price}"
     print(result)
     return price

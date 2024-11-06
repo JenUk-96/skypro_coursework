@@ -1,16 +1,10 @@
-import os.path
+from src.utils import currency_conversion, read_xlsx_file
+
+from unittest.mock import patch
+from unittest.mock import patch
 
 from src.utils import currency_conversion, read_xlsx_file
-from unittest.mock import patch
 
-
-from datetime import datetime
-
-import pytest
-import sys
-from pathlib import Path
-from src.config import ROOT_PATH
-from unittest.mock import patch
 
 @patch("requests.get")
 def test_currency_conversion(mock_get):
@@ -21,6 +15,7 @@ def test_currency_conversion(mock_get):
 
 def path_to_file():
     return "C:\Users\Docto|PycharmProjects\skypro_courcework\data\OperationsTest.xlsx"
+
 
 def test_read_xlsx_file(path_to_file):
     assert read_xlsx_file(path_to_file) == [

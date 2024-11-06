@@ -4,21 +4,23 @@ import pandas as pd
 
 from src.utils import data_to_df, path_to_file
 
-logger = logging.getLogger("report.log")
-#file_handler = logging.FileHandler("logs/report.log", "w", encoding='utf-8')
-file_formatter = logging.Formatter("%(asctime)s %(filename)s %(levelname)s: %(message)s")
-#file_handler.setFormatter(file_formatter)
-#logger.addHandler(file_handler)
+logger = logging.getLogger("report")
 logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler('log/report.log')
+file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
 
 
 def spending_by_category(
         transactions: pd.DataFrame, category: str, date: [str] = None
 ) -> pd.DataFrame:
-    # """Функция-отчет по транзакциям в указанной категории"""
+    logger.info(f'Начало работы функции-отчета по тразакциям')
+    """Функция-отчет по транзакциям в указанной категории"""
     df = transactions
     date = pd.to_datetime("31.07.2021", format="%d.%m.%Y")  # '2021-07-31'
-    # # Указываем дату, от которой нужно отобрать последние три месяца
+    # Указываем дату, от которой нужно отобрать последние три месяца
     if date == None:
         date = pd.to_datetime("31.07.2021", format="%d.%m.%Y")
     # Вычисляем дату начала периода (3 месяца назад)
