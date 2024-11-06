@@ -1,51 +1,64 @@
-from unittest.mock import patch
+import os.path
+
+import pytest
 
 from src.utils import currency_conversion, read_xlsx_file
 
 
-@patch("requests.get")
-def test_currency_conversion(mock_get):
-    """Тестирование функции, передающей курсы валют"""
-    mock_get.return_value.json.return_value = {"result": 106.85}
-    assert currency_conversion("USD") == 106.85
+@pytest.fixture()
+def path_test():
+    return os.path.join(os.path.abspath(__file__), '../../data/OperationsTest.xlsx')
 
 
-def path_to_file():
-    return "C:\Users\Docto|PycharmProjects\skypro_courcework\data\OperationsTest.xlsx"
-
-
-def test_read_xlsx_file(path_to_file):
-    assert read_xlsx_file(path_to_file) == [
+def test_read_xlsx_file(path_test):
+    assert read_xlsx_file(path_test) == [
         {
-            "Бонусы (включая кешбэк)": 3,
-            "Валюта операции": "RUB",
-            "Валюта платежа": "RUB",
-            "Дата операции": "31.12.2021 16:44:00",
-            "Дата платежа": "31.12.2021",
-            "Категория": "Супермаркеты",
-            "Кешбэк": 0,
-            "МСС": 5411,
-            "Номер карты": "*7197",
-            "Округление на Инвесткопилку": 0,
-            "Описание": "Колхоз",
-            "Статус": "OK",
-            "Сумма операции": -160.89,
-            "Сумма операции с округлением": 160.89,
+            'Валюта платежа': 'RUB',
+            'Дата платежа': '31.12.2021',
+            'Категория': 'Супермаркеты',
+            'Номер карты': '*7197',
+            'Описание': 'Колхоз',
+            'Статус': 'OK',
+            'Сумма платежа': -160.89,
         },
         {
-            "Бонусы (включая кешбэк)": 1,
-            "Валюта операции": "RUB",
-            "Валюта платежа": "RUB",
-            "Дата операции": "31.12.2021 16:42:04",
-            "Дата платежа": "31.12.2021",
-            "Категория": "Супермаркеты",
-            "Кешбэк": 0,
-            "МСС": 5411,
-            "Номер карты": "*7197",
-            "Округление на Инвесткопилку": 0,
-            "Описание": "Колхоз",
-            "Статус": "OK",
-            "Сумма операции": -64,
-            "Сумма операции с округлением": 64,
+            'Валюта платежа': 'RUB',
+            'Дата платежа': '31.12.2021',
+            'Категория': 'Супермаркеты',
+            'Номер карты': '*7197',
+            'Описание': 'Колхоз',
+            'Статус': 'OK',
+            'Сумма платежа': -64,
         },
     ]
+
+
+from unittest.mock import patch
+
+
+@patch('requests.get')
+def test_currency_conversion_usd(mock_get):
+    mock_response = {
+        "query": {"from": "USD", "to": "RUB", "amount": 1},
+        "info": {"rate": 75.25},
+        "date": "2024-11-05",
+        "historical": False,
+        "result": 75.25
+    }
+    mock_get.return_value.json.return_value = mock_response
+    rate = currency_conversion("USD")
+    assert rate == 75.25
+
+
+@patch('requests.get')
+def test_currency_conversion_eur(mock_get):
+    mock_response = {
+        "query": {"from": "EUR", "to": "RUB", "amount": 1},
+        "info": {"rate": 90.50},
+        "date": "2024-11-05",
+        "historical": False,
+        "result": 90.50
+    }
+    mock_get.return_value.json.return_value = mock_response
+    rate = currency_conversion("EUR")
+    assert rate == 90.50

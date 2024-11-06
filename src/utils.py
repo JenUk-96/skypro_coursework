@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger('utils')
 logger.setLevel(logging.INFO)
-log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs") # поднимаемся на один уровень вверх
+log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
 os.makedirs(log_dir, exist_ok=True)
 file_handler = logging.FileHandler(os.path.join(log_dir, 'utils.log'))
 file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
@@ -22,7 +22,7 @@ api_key = os.getenv("API_KEY")
 
 
 def currency_conversion(currency):
-    """функция, которая принимает код валюты и возвращает ее курс на дату 31.07.2021"""
+    """Функция, которая принимает код валюты и возвращает ее курс на дату 05.11.2024"""
     # currency = "USD"
     amount = 1
     url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={amount}"
@@ -37,7 +37,7 @@ def currency_conversion(currency):
     return rate
 
 
-path_to_file = os.path.join(os.path.abspath(__file__), "../../data/operations.xlsx")
+path_to_file = os.path.join(os.path.abspath(__file__), "../../data/OperationsTest.xlsx")
 
 
 def read_xlsx_file(path_to_file):

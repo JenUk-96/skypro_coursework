@@ -7,7 +7,7 @@ from src.utils import data_to_df, path_to_file
 
 logger = logging.getLogger("report")
 logger.setLevel(logging.INFO)
-log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs") # поднимаемся на один уровень вверх
+log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
 os.makedirs(log_dir, exist_ok=True)
 file_handler = logging.FileHandler(os.path.join(log_dir, 'report.log'))
 file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')

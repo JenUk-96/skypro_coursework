@@ -3,8 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.views import get_price_stock
-from src.views import greet_user
+from src.views import get_price_stock, greet_user
 
 
 @patch("src.views.datetime")

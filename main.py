@@ -7,10 +7,11 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 import json
 import logging
 from pathlib import Path
-from src.views import greet_user, filter_operations, get_price_stock, hour
-from src.utils import currency_conversion, data_to_df
-from src.services import investment_bank, creat_dict
+
 from src.reports import spending_by_category
+from src.services import creat_dict, investment_bank
+from src.utils import currency_conversion, data_to_df
+from src.views import filter_operations, get_price_stock, greet_user, hour
 
 path_to_file = Path(ROOT_PATH, "../data/operations.xlsx")
 

@@ -4,14 +4,14 @@ import os
 
 import requests
 
-from src.utils import read_xlsx_file, path_to_file
+from src.utils import path_to_file, read_xlsx_file
 
 current_date = datetime.datetime.now()
 hour = current_date.hour
 
 logger = logging.getLogger('views')
 logger.setLevel(logging.INFO)
-log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs") # поднимаемся на один уровень вверх
+log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
 os.makedirs(log_dir, exist_ok=True)
 file_handler = logging.FileHandler(os.path.join(log_dir, 'views.log'))
 file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
