@@ -1,6 +1,3 @@
-from src.utils import currency_conversion, read_xlsx_file
-
-from unittest.mock import patch
 from unittest.mock import patch
 
 from src.utils import currency_conversion, read_xlsx_file
