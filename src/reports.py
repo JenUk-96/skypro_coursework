@@ -1,51 +1,50 @@
+import json
 import logging
 import os
+from datetime import datetime
+from typing import Callable, Optional
 
 import pandas as pd
 
-from src.utils import data_to_df, path_to_file
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-logger = logging.getLogger("report")
-logger.setLevel(logging.INFO)
-log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
-os.makedirs(log_dir, exist_ok=True)
-file_handler = logging.FileHandler(os.path.join(log_dir, 'report.log'))
-file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s')
+rel_file_path = os.path.join(current_dir, "../logs/reports.log")
+abs_file_path = os.path.abspath(rel_file_path)
+
+logger = logging.getLogger("reports")
+logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler(abs_file_path, "w", encoding="utf-8")
+file_formatter = logging.Formatter("%(asctime)s - %(funcName)s %(levelname)s: %(message)s")
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def spending_by_category(
-        transactions: pd.DataFrame, category: str, date: [str] = None
-) -> pd.DataFrame:
-    logger.info('Начало работы функции-отчета по тразакциям')
-    """Функция-отчет по транзакциям в указанной категории"""
-    df = transactions
-    date = pd.to_datetime("31.07.2021", format="%d.%m.%Y")  # '2021-07-31'
-    # Указываем дату, от которой нужно отобрать последние три месяца
-    if date == None:
-        date = pd.to_datetime("31.07.2021", format="%d.%m.%Y")
-    # Вычисляем дату начала периода (3 месяца назад)
-    start_date = date - pd.Timedelta(days=92)
+def recording_data(file_name: str = "default_report.json") -> Callable:
+    """Декоратор, который записывает в файл результат, который возвращает функция, формирующая отчет"""
 
-    # Фильтруем дата фрейм по дате
-    filtered_df = df[
-        (pd.to_datetime(df["Дата операции"], dayfirst=True) >= start_date)
-        & (pd.to_datetime(df["Дата операции"], dayfirst=True) <= date)
+    def decorator(func) -> Callable:
+        def wrapper(*args, **kwargs) -> json:
+            result = func(*args, **kwargs)
+            result.to_json(path_or_buf=file_name, orient="records", force_ascii=False, indent=4)
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+@recording_data()
+def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
+    """Возвращает траты по заданной категории за последние три месяца (от переданной даты)"""
+    logger.info("Ищем траты по конкретной категории")
+    if date is None:
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+    three_months_ago = date - pd.DateOffset(months=3)
+    transactions["Дата платежа"] = pd.to_datetime(transactions["Дата платежа"], format="%d.%m.%Y")
+    filtered_operations = transactions[
+        (transactions["Категория"] == category) &
+        (three_months_ago <= transactions["Дата платежа"]) &
+        (transactions["Дата платежа"] <= date)
         ]
-
-    # рассчитываем сумму расходов по каждой категории
-    sum_price_by_category = filtered_df.groupby("Категория")["Сумма операции"].sum()
-
-    # выводим сумму расходов в заданной категории
-    print(
-        f"Траты в категории {category} за последние 3 месяца составили {sum_price_by_category[category]} руб.")
-    logger.info("Выдаю данные по расходам в категории")
-   # return result
-
-
-if __name__ == "__main__":
-    transactions = data_to_df(path_to_file)
-    print(transactions.head())
-
-    spending_by_category(transactions, "Супермаркеты")
+    return filtered_operations
