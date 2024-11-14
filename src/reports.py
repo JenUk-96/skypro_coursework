@@ -38,10 +38,10 @@ def spending_by_category(
     sum_price_by_category = filtered_df.groupby("Категория")["Сумма операции"].sum()
 
     # выводим сумму расходов в заданной категории
-    result = print(
+    print(
         f"Траты в категории {category} за последние 3 месяца составили {sum_price_by_category[category]} руб.")
     logger.info("Выдаю данные по расходам в категории")
-    return result
+   # return result
 
 
 if __name__ == "__main__":

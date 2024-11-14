@@ -29,8 +29,8 @@ def currency_conversion(currency):
     response = requests.get(url, headers={"apikey": api_key})
     result = response.json()
     date = "2024-11-05"
-    from_currency = result["query"]["from"]
-    to_currency = result["query"]["to"]
+#    from_currency = result["query"]["from"]
+#    to_currency = result["query"]["to"]
     rate = result["info"]["rate"]
     logging.info("Передаю данные о курсе валют")
     print(f"Дата: {date}; Валюта: {currency}; Курс: {round(rate, 2)}")

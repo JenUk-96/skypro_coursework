@@ -1,17 +1,15 @@
+import json
+import logging
 import sys
 from pathlib import Path
 
 from src.config import ROOT_PATH
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-import json
-import logging
-from pathlib import Path
-
 from src.reports import spending_by_category
 from src.services import creat_dict, investment_bank
 from src.utils import currency_conversion, data_to_df
 from src.views import filter_operations, get_price_stock, greet_user, hour
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 path_to_file = Path(ROOT_PATH, "../data/operations.xlsx")
 
@@ -22,11 +20,12 @@ file_formatted = logging.Formatter("%(asctime)s-%(name)s-%(levelname)s: %(messag
 file_handler.setFormatter(file_formatted)
 logger.addHandler(file_handler)
 
+
 def main():
     """Функция упраления проектом"""
     global month
     logger.info("Программа запущена")
-    name_user = input(f"Введите имя: \n")
+    name_user = input("Введите имя:\n")
     print(f"{name_user}, {greet_user(hour)}")
     print("""Добро пожаловать в раздел "Главная страница"! """)
     print("Предлагаем ознакомиться с курсом валют и акций.")
@@ -46,7 +45,6 @@ def main():
     Хотите знать, сколько денег Вы могли бы отложить в Инвест-копилку за месяц?
     """
     )
-#while True:
     es_no = input("Введите 'да' или 'нет': ").lower()
     if es_no == "да":
         # Читаем данные из excel-файла
@@ -70,7 +68,7 @@ def main():
         while True:
             month_choice = int(
                 input(
-                    f"Для расчета возьмём 2021 год. Введите порядковый номер месяца от 1 до 12: "
+                    "Для расчета возьмём 2021 год. Введите порядковый номер месяца от 1 до 12: "
                 )
             )
             if 0 < month_choice < 10:
@@ -84,24 +82,22 @@ def main():
                 continue
                 break
         total_investment = investment_bank(month, transactions, limit)
-        logger.info(f"Производим расчет сумм для инвесткопилки")
+        logger.info("Производим расчет сумм для инвесткопилки")
         # создаем json-строку
         data = {"total_investment": total_investment}
         json_data = json.dumps((data))
         print(f"Json-ответ: {json_data}")
-        # return json_data
+        return json_data
     elif es_no == "нет":
         print("Хорошо. До встречи!")
-        #break
     else:
         logger.error("Ошибка")
         print("Ошибка ввода")
-        #continue
 
     print("Добро пожаловать в раздел Отчёты!")
     transactions = data_to_df(path_to_file)
     spending_by_category(transactions, "Супермаркеты")
-    logger.info(f"Работа программы завершена")
+    logger.info("Работа программы завершена")
     return print("Программа завершает свою работу, до новых встреч!")
 
 

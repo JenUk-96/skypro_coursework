@@ -1,4 +1,5 @@
 import os.path
+from unittest.mock import patch
 
 import pytest
 
@@ -31,9 +32,6 @@ def test_read_xlsx_file(path_test):
             'Сумма платежа': -64,
         },
     ]
-
-
-from unittest.mock import patch
 
 
 @patch('requests.get')

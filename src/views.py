@@ -94,7 +94,7 @@ def get_price_stock(symbol: list) -> list:
     """Функция получения данных об акциях из списка S&P500"""
     logger.info("Начало работы функции (get_price_stock)")
     apikey = os.getenv("APIKEY")
-    date = "2024-11-01"
+    date = datetime.datetime.now()
     url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={apikey}"
     # Отправка запроса
     response = requests.get(url)
